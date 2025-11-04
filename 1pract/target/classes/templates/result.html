@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <title th:text="${title}">Результат</title>
+  <link rel="stylesheet" th:href="@{/style.css}" href="/style.css"/>
+</head>
+<body>
+<h1 th:text="${title}">Результат</h1>
+<p th:text="${message}">Ответ будет здесь</p>
+<p><a th:href="@{/}">На главную</a></p>
+</body>
+</html>

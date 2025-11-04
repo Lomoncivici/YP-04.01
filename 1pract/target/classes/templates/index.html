@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <title>Главная</title>
+  <link rel="stylesheet" th:href="@{/style.css}" href="/style.css"/>
+</head>
+<body>
+<h1>Главная страница</h1>
+<nav>
+  <a th:href="@{/calculator}">Калькулятор</a> |
+  <a th:href="@{/converter}">Конвертер валют</a>
+</nav>
+</body>
+</html>
