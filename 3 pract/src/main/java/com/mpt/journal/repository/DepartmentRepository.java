@@ -1,0 +1,12 @@
+package com.mpt.journal.repository;
+import com.mpt.journal.entity.Department;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+import java.util.List;
+@Repository
+public interface DepartmentRepository extends JpaRepository<Department, Long> {
+    List<Department> findByDeletedFalseOrderByNameAsc(); // для выпадающих списков
+    Page<Department> findByDeletedFalse(Pageable pageable); // для пагинации
+}
