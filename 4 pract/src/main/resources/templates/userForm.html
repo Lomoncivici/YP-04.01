@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title th:text="${userId} == null ? 'Создание пользователя' : 'Редактирование пользователя'"></title>
+    <style>
+        body{font-family:Arial,sans-serif;margin:20px}
+        form{max-width:400px}
+        label{display:block;margin-top:10px}
+        input,select{width:100%;padding:6px;box-sizing:border-box}
+        .toolbar{margin-bottom:10px}
+        button{margin-top:15px;padding:6px 16px}
+    </style>
+</head>
+<body>
+
+<div class="toolbar">
+    <a th:href="@{/users}">← к списку пользователей</a>
+</div>
+
+<h1 th:text="${userId} == null ? 'Создание пользователя' : 'Редактирование пользователя'"></h1>
+
+<form th:action="@{/users/save}" method="post">
+    <input type="hidden" name="userId" th:value="${userId}"/>
+
+    <label>Логин:
+        <input type="text" name="username" th:value="${username}" required/>
+    </label>
+
+    <label>
+        Пароль
+        <span th:if="${userId != null}">(оставьте пустым, чтобы не менять)</span>:
+        <input type="password" name="password"/>
+    </label>
+
+    <label>Роль:
+        <select name="role">
+            <option th:each="r : ${roles}"
+                    th:value="${r}"
+                    th:selected="${r == role}"
+                    th:text="${r}">
+            </option>
+        </select>
+    </label>
+
+    <label>
+        <input type="checkbox" name="enabled" th:checked="${enabled}"/> Активен
+    </label>
+
+    <button type="submit">Сохранить</button>
+</form>
+
+</body>
+</html>

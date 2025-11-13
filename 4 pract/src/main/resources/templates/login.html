@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Вход</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .card { max-width: 400px; margin: 40px auto; border: 1px solid #ddd; padding: 20px; border-radius: 4px; }
+        label { display: block; margin-top: 10px; }
+        input[type=text], input[type=password] { width: 100%; padding: 6px; box-sizing: border-box; }
+        .error { color: darkred; margin-top: 10px; }
+        .message { color: green; margin-top: 10px; }
+        button { margin-top: 15px; padding: 6px 16px; }
+    </style>
+</head>
+<body>
+<div class="card">
+    <h2>Вход</h2>
+
+    <div th:if="${param.error}" class="error">
+        Неверное имя пользователя или пароль.
+    </div>
+    <div th:if="${param.logout}" class="message">
+        Вы вышли из системы.
+    </div>
+    <div th:if="${param.registered}" class="message">
+        Регистрация прошла успешно. Войдите, используя свои данные.
+    </div>
+
+    <form th:action="@{/login}" method="post">
+        <label>Имя пользователя:
+            <input type="text" name="username" required/>
+        </label>
+        <label>Пароль:
+            <input type="password" name="password" required/>
+        </label>
+        <button type="submit">Войти</button>
+    </form>
+
+    <p style="margin-top: 10px;">
+        Нет аккаунта?
+        <a th:href="@{/register}">Зарегистрироваться</a>
+    </p>
+</div>
+</body>
+</html>
