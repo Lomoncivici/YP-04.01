@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Регистрация</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .card { max-width: 400px; margin: 40px auto; border: 1px solid #ddd; padding: 20px; border-radius: 4px; }
+        label { display: block; margin-top: 10px; }
+        input[type=text], input[type=password] { width: 100%; padding: 6px; box-sizing: border-box; }
+        .error { color: darkred; margin-top: 5px; font-size: 0.9em; }
+        button { margin-top: 15px; padding: 6px 16px; }
+    </style>
+</head>
+<body>
+<div class="card">
+    <h2>Регистрация</h2>
+
+    <form th:action="@{/register}" th:object="${user}" method="post">
+        <label>Имя пользователя:
+            <input type="text" th:field="*{username}"/>
+        </label>
+        <div class="error"
+             th:if="${#fields.hasErrors('username')}"
+             th:errors="*{username}"></div>
+
+        <label>Пароль:
+            <input type="password" th:field="*{password}"/>
+        </label>
+        <div class="error"
+             th:if="${#fields.hasErrors('password')}"
+             th:errors="*{password}"></div>
+
+        <label>Подтверждение пароля:
+            <input type="password" th:field="*{confirmPassword}"/>
+        </label>
+        <div class="error"
+             th:if="${#fields.hasErrors('confirmPassword')}"
+             th:errors="*{confirmPassword}"></div>
+
+        <button type="submit">Зарегистрироваться</button>
+    </form>
+
+    <p style="margin-top: 10px;">
+        Уже есть аккаунт?
+        <a th:href="@{/login}">Войти</a>
+    </p>
+</div>
+</body>
+</html>

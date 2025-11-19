@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+  <meta charset="UTF-8"/>
+  <title>Теги</title>
+  <style>
+    body{font-family:Arial;margin:20px}
+    table{border-collapse:collapse;width:100%;margin-top:10px}
+    th,td{border:1px solid #ddd;padding:8px} th{background:#f0f0f0}
+    .pagination{margin-top:10px;display:flex;gap:8px}
+  </style>
+</head>
+<body>
+<h1>Теги</h1>
+<a th:href="@{/students}">← к студентам</a>
+
+<div sec:authorize="hasRole('ADMIN')">
+<h3>Добавить тег</h3>
+<form method="post" th:action="@{/tags/add}" th:object="${tag}">
+  <input type="text" th:field="*{name}" placeholder="Название" required/>
+  <button type="submit">Сохранить</button>
+</form>
+</div>
+
+<table>
+  <thead><tr><th>ID</th><th>Название</th><th>Действия</th></tr></thead>
+  <tbody>
+    <tr th:each="t : ${page.content}">
+      <td th:text="${t.id}"></td>
+      <td th:text="${t.name}"></td>
+      <td>
+        <div sec:authorize="hasRole('ADMIN')">
+        <form method="post" th:action="@{/tags/delete}" style="display:inline-block">
+          <input type="hidden" name="id" th:value="${t.id}"/>
+          <button>Удалить</button>
+        </form>
+        </div>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="pagination">
+    <a th:if="${!page.first}"
+       th:href="@{/tags(
+         pageIndex=${page.number - 1},
+         size=${page.size},
+         onlyActive=${onlyActive},
+         sort=${sort},
+         dir=${dir}
+     )}">« Назад</a>
+
+    <span>
+    <span th:text="${page.number + 1}">1</span>
+    /
+    <span th:text="${page.totalPages}">1</span>
+  </span>
+
+    <a th:if="${!page.last}"
+       th:href="@{/tags(
+         pageIndex=${page.number + 1},
+         size=${page.size},
+         onlyActive=${onlyActive},
+         sort=${sort},
+         dir=${dir}
+     )}">Вперёд »</a>
+</div>
+
+
+</body>
+</html>
+
+<script>
+    (function() {
+        const IDLE_LIMIT_MS = 30 * 1000; // 30 секунд
+        let lastActivity = Date.now();
+
+        function resetTimer() {
+            lastActivity = Date.now();
+        }
+
+        ['click', 'mousemove', 'keydown', 'scroll', 'touchstart'].forEach(evt => {
+            document.addEventListener(evt, resetTimer, {passive: true});
+        });
+
+        setInterval(function () {
+            const now = Date.now();
+            if (now - lastActivity > IDLE_LIMIT_MS) {
+                fetch('/logout', { method: 'POST' })
+                    .finally(() => {
+                        window.location.href = '/login?idle';
+                    });
+            }
+        }, 5000); // раз в 5 секунд проверка
+    })();
+</script>
