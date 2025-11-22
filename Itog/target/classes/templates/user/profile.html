@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Профиль пассажира</title>
+    <style>
+        :root {
+            --accent: #2563eb;
+            --accent-soft: #eff6ff;
+            --border: #e5e7eb;
+            --text-main: #111827;
+            --text-muted: #6b7280;
+            --error: #b91c1c;
+            --success: #15803d;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            background: #f3f4f6;
+            color: var(--text-main);
+        }
+
+        header {
+            background: #ffffff;
+            border-bottom: 1px solid var(--border);
+            padding: 10px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+            font-size: 1rem;
+        }
+
+        .brand span.icon {
+            font-size: 1.2rem;
+        }
+
+        nav {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        a.nav-link {
+            padding: 6px 12px;
+            border-radius: 999px;
+            border: 1px solid transparent;
+            text-decoration: none;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        a.nav-link.active {
+            border-color: var(--accent);
+            color: var(--accent);
+            background: var(--accent-soft);
+        }
+
+        a.nav-link.logout {
+            border-color: #ef4444;
+            color: #b91c1c;
+            background: #fef2f2;
+        }
+
+        a.nav-link:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+            background: var(--accent-soft);
+        }
+
+        a.nav-link.logout:hover {
+            border-color: #b91c1c;
+            background: #fee2e2;
+        }
+
+        main {
+            max-width: 960px;
+            margin: 20px auto 32px;
+            padding: 0 16px;
+        }
+
+        h1 {
+            margin: 0 0 4px;
+            font-size: 1.4rem;
+            font-weight: 600;
+        }
+
+        .subtitle {
+            margin-bottom: 10px;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .status-message {
+            margin-bottom: 14px;
+            font-size: 0.85rem;
+        }
+
+        .status-message.success {
+            color: var(--success);
+        }
+
+        .status-message.error {
+            color: var(--error);
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
+            gap: 16px;
+        }
+
+        @media (max-width: 768px) {
+            .grid {
+                grid-template-columns: minmax(0, 1fr);
+            }
+        }
+
+        .card {
+            background: #ffffff;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            padding: 14px 16px 16px;
+        }
+
+        .card h2 {
+            margin: 0 0 10px;
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        dl {
+            margin: 0;
+        }
+
+        dt {
+            margin-top: 8px;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: .06em;
+            color: var(--text-muted);
+        }
+
+        dd {
+            margin: 2px 0 0;
+            font-size: 0.9rem;
+        }
+
+        .muted {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .stats-row {
+            display: flex;
+            gap: 12px;
+            margin-top: 8px;
+        }
+
+        .stat-block {
+            flex: 1;
+            padding: 8px 10px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            background: #f9fafb;
+            text-align: center;
+        }
+
+        .stat-label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .stat-value {
+            margin-top: 4px;
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .flight-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px;
+            font-size: 0.95rem;
+            font-weight: 500;
+        }
+
+        .flight-number {
+            padding: 2px 8px;
+            border-radius: 999px;
+            border: 1px solid var(--border);
+            font-size: 0.8rem;
+        }
+
+        .flight-route {
+            display: flex;
+            align-items: center;
+            font-size: 0.95rem;
+            gap: 6px;
+        }
+
+        .flight-route span.code {
+            font-weight: 600;
+        }
+
+        .flight-time {
+            margin-top: 8px;
+            font-size: 0.9rem;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 999px;
+            font-size: 0.75rem;
+            border: 1px solid var(--border);
+            background: #f9fafb;
+            margin-top: 4px;
+        }
+
+        form.profile-edit,
+        form.security-edit {
+            margin-top: 12px;
+            padding-top: 10px;
+            border-top: 1px solid var(--border);
+        }
+
+        form.profile-edit label,
+        form.security-edit label {
+            display: block;
+            margin-top: 8px;
+            font-size: 0.9rem;
+        }
+
+        form.profile-edit input[type="text"],
+        form.profile-edit input[type="email"],
+        form.security-edit input[type="text"],
+        form.security-edit input[type="password"] {
+            width: 100%;
+            margin-top: 4px;
+            padding: 7px 8px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            font-size: 0.9rem;
+        }
+
+        form.profile-edit button,
+        form.security-edit button {
+            margin-top: 12px;
+            padding: 7px 14px;
+            border-radius: 999px;
+            border: 1px solid var(--accent);
+            background: var(--accent);
+            color: white;
+            font-size: 0.9rem;
+            cursor: pointer;
+        }
+
+        form.profile-edit button:hover,
+        form.security-edit button:hover {
+            background: #1d4ed8;
+        }
+
+        .field-hint {
+            margin-top: 2px;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .field-error {
+            margin-top: 2px;
+            font-size: 0.8rem;
+            color: var(--error);
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="brand">
+        <span class="icon">✈</span>
+        <span>AirBooking</span>
+    </div>
+    <nav>
+        <a th:href="@{/user/profile}" class="nav-link active">Профиль</a>
+        <a th:href="@{/user/flights}" class="nav-link">Рейсы</a>
+        <a th:href="@{/user/bookings}" class="nav-link">Мои брони</a>
+        <a th:href="@{/logout}" class="nav-link logout">Выйти</a>
+    </nav>
+</header>
+
+<main>
+    <h1>Профиль пассажира</h1>
+    <div class="subtitle">
+        Краткая информация о вас и ваших перелётах.
+    </div>
+
+    <!-- сообщения -->
+    <div th:if="${param.updated}" class="status-message success">
+        Данные профиля обновлены.
+    </div>
+    <div th:if="${param.secUpdated}" class="status-message success">
+        Настройки безопасности обновлены.
+    </div>
+    <div th:if="${param.pwdError}" class="status-message error">
+        Неверный текущий пароль.
+    </div>
+    <div th:if="${param.secError == 'username'}" class="status-message error">
+        Такой логин уже используется.
+    </div>
+    <div th:if="${param.secError == 'pwdMismatch'}" class="status-message error">
+        Новый пароль и подтверждение не совпадают.
+    </div>
+    <div th:if="${param.updated}" class="status-message success">
+        Данные профиля обновлены.
+    </div>
+    <div th:if="${param.secUpdated}" class="status-message success">
+        Настройки безопасности обновлены.
+    </div>
+    <div th:if="${param.pwdError}" class="status-message error">
+        Неверный текущий пароль.
+    </div>
+    <div th:if="${param.secError == 'username'}" class="status-message error">
+        Такой логин уже используется.
+    </div>
+    <div th:if="${param.secError == 'pwdMismatch'}" class="status-message error">
+        Новый пароль и подтверждение не совпадают.
+    </div>
+    <div th:if="${param.secError == 'pwdShort'}" class="status-message error">
+        Новый пароль должен быть не короче 8 символов.
+    </div>
+    <div th:if="${param.secError == 'pwdWeak'}" class="status-message error">
+        Новый пароль должен содержать хотя бы одну букву и одну цифру.
+    </div>
+    <div th:if="${param.secError == 'pwdEmpty'}" class="status-message error">
+        Укажите новый пароль, если заполняете поле подтверждения.
+    </div>
+
+    <section class="grid">
+
+        <!-- Личные данные + контактные + безопасность -->
+        <article class="card">
+            <h2>Личные данные</h2>
+
+            <dl>
+                <dt>Логин</dt>
+                <dd th:text="${user.username}">user</dd>
+
+                <dt>ФИО</dt>
+                <dd th:text="${user.fullName} ?: 'не указано'">Иванов Иван Иванович</dd>
+
+                <dt>E-mail</dt>
+                <dd th:text="${user.email} ?: 'не указан'">user@example.com</dd>
+
+                <dt>Роль</dt>
+                <dd th:text="${user.role}">USER</dd>
+
+                <dt>Статус учётной записи</dt>
+                <dd th:text="${user.enabled} ? 'Активна' : 'Заблокирована'">Активна</dd>
+
+                <dt>Дата регистрации</dt>
+                <dd th:text="${user.createdAt}">2025-01-01T12:00</dd>
+            </dl>
+
+            <!-- Форма: ФИО и e-mail -->
+            <form class="profile-edit"
+                  th:action="@{/user/profile/update}"
+                  method="post">
+                <h2 style="margin-top: 0;">Контактные данные</h2>
+
+                <label>
+                    ФИО
+                    <input type="text"
+                           name="fullName"
+                           th:value="${user.fullName}">
+                    <div class="field-hint">Можно оставить пустым, если не хотите указывать.</div>
+                </label>
+
+                <label>
+                    E-mail
+                    <input type="email"
+                           name="email"
+                           th:value="${user.email}">
+                    <div class="field-hint">Используется для уведомлений о бронированиях (опционально).</div>
+                </label>
+
+                <button type="submit">Сохранить контактные данные</button>
+            </form>
+
+            <!-- Форма: логин + пароль -->
+            <form class="security-edit"
+                  th:action="@{/user/profile/security}"
+                  method="post">
+                <h2 style="margin-top: 0;">Безопасность</h2>
+
+                <label>
+                    Текущий пароль
+                    <input type="password"
+                           name="currentPassword"
+                           required>
+                    <div class="field-hint">Нужен для подтверждения изменения логина или пароля.</div>
+                </label>
+
+                <label>
+                    Новый логин
+                    <input type="text"
+                           name="newUsername"
+                           th:value="${user.username}">
+                    <div class="field-hint">Оставьте как есть, если не хотите менять логин.</div>
+                </label>
+
+                <label>
+                    Новый пароль
+                    <input type="password"
+                           name="newPassword">
+                    <div class="field-hint">Оставьте пустым, если не хотите менять пароль.</div>
+                </label>
+
+                <label>
+                    Подтверждение нового пароля
+                    <input type="password"
+                           name="confirmPassword">
+                </label>
+
+                <button type="submit">Обновить логин / пароль</button>
+            </form>
+        </article>
+
+        <!-- Статистика и ближайший рейс -->
+        <article class="card">
+            <h2>Перелёты</h2>
+
+            <div class="stats-row">
+                <div class="stat-block">
+                    <div class="stat-label">Все бронирования</div>
+                    <div class="stat-value" th:text="${totalBookings}">0</div>
+                </div>
+                <div class="stat-block">
+                    <div class="stat-label">Предстоящие</div>
+                    <div class="stat-value" th:text="${upcomingBookings}">0</div>
+                </div>
+                <div class="stat-block">
+                    <div class="stat-label">Завершённые</div>
+                    <div class="stat-value" th:text="${pastBookings}">0</div>
+                </div>
+            </div>
+
+            <div class="stat-block" style="margin-top: 10px; text-align: left;">
+                <div class="stat-label">Суммарно оплачено</div>
+                <div class="stat-value">
+                    <span th:text="${totalSpent}">0</span> ₽
+                </div>
+            </div>
+
+            <hr style="border: none; border-top: 1px solid var(--border); margin: 14px 0 10px;">
+
+            <h2 style="margin-bottom: 6px;">Ближайший рейс</h2>
+
+            <div th:if="${nextBooking != null}">
+                <div class="flight-header">
+                    <div class="flight-number"
+                         th:text="${nextBooking.flight.flightNumber}">SU123</div>
+                    <div class="badge" th:text="${nextBooking.status}">BOOKED</div>
+                </div>
+
+                <div class="flight-route">
+                    <span class="code"
+                          th:text="${nextBooking.flight.route.departureAirport.code}">SVO</span>
+                    <span>→</span>
+                    <span class="code"
+                          th:text="${nextBooking.flight.route.arrivalAirport.code}">LED</span>
+                </div>
+                <div class="muted"
+                     th:text="${nextBooking.flight.route.departureAirport.city + ' — ' +
+                              nextBooking.flight.route.arrivalAirport.city}">
+                    Москва — Санкт-Петербург
+                </div>
+
+                <div class="flight-time">
+                    Вылет:
+                    <span th:text="${nextBooking.flight.departureTime}">2025-01-01T12:00</span>
+                </div>
+                <div class="flight-time">
+                    Сумма:
+                    <span th:text="${nextBooking.totalPrice}">5000</span> ₽
+                </div>
+            </div>
+
+            <p th:if="${nextBooking == null}" class="muted">
+                Ближайших рейсов пока нет. Вы можете подобрать перелёт на странице «Рейсы».
+            </p>
+        </article>
+
+    </section>
+</main>
+
+</body>
+</html>

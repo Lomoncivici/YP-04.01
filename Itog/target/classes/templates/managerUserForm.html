@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${title}">Пользователь</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        label { display: block; margin-top: 10px; }
+        input[type="text"], input[type="password"], select { width: 300px; padding: 4px; }
+        .buttons { margin-top: 15px; display: flex; gap: 10px; }
+        a.button, button.button {
+            display: inline-block;
+            padding: 6px 12px;
+            text-decoration: none;
+            border: 1px solid #333;
+            border-radius: 4px;
+            background: #f5f5f5;
+            cursor: pointer;
+        }
+        .error {
+            color: red;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<h1 th:text="${title}">Пользователь</h1>
+
+<div th:if="${errorMessage}" class="error" th:text="${errorMessage}"></div>
+
+<form th:action="@{/manager/users/save}" th:object="${user}" method="post">
+    <input type="hidden" th:field="*{id}"/>
+
+    <label>
+        Логин:
+        <input type="text" th:field="*{username}" />
+    </label>
+
+    <label>
+        Пароль:
+        <input type="password" name="rawPassword" />
+        <small th:if="*{id != null}">
+            Оставьте пустым, чтобы не менять пароль
+        </small>
+
+        <div class="field-error"
+             th:if="${#fields.hasErrors('password')}"
+             th:errors="*{password}"></div>
+    </label>
+
+    <label>
+        Роль:
+        <select th:field="*{role}">
+            <option th:each="r : ${roles}"
+                    th:value="${r}"
+                    th:text="${r}">
+            </option>
+        </select>
+    </label>
+
+    <label>
+        Активен:
+        <input type="checkbox" th:field="*{enabled}" />
+    </label>
+
+    <div class="buttons">
+        <button type="submit" class="button">Сохранить</button>
+        <a th:href="@{/manager/users}" class="button">Отмена</a>
+    </div>
+</form>
+
+</body>
+</html>

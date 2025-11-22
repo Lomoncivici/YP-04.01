@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${title}">Самолёт</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        label { display: block; margin-top: 10px; }
+        input[type="text"], input[type="number"] { width: 320px; padding: 4px; }
+        .error { color: red; font-size: 0.9em; }
+        .buttons { margin-top: 15px; display: flex; gap: 10px; flex-wrap: wrap; }
+        a.button, button.button {
+            display: inline-block;
+            padding: 6px 12px;
+            text-decoration: none;
+            border: 1px solid #333;
+            border-radius: 4px;
+            background: #f5f5f5;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+<h1 th:text="${title}">Самолёт</h1>
+
+<p>
+    <a th:href="@{/admin/airports}" class="button">Аэропорты (главная)</a>
+    <a th:href="@{/admin/aircrafts}" class="button">Список самолётов</a>
+    <a th:href="@{/logout}" class="button">Выйти</a>
+</p>
+
+<form th:action="@{/admin/aircrafts/save}" th:object="${aircraft}" method="post">
+    <input type="hidden" th:field="*{id}"/>
+
+    <label>
+        Модель:
+        <input type="text" th:field="*{model}"/>
+    </label>
+    <div class="error" th:if="${#fields.hasErrors('model')}" th:errors="*{model}"></div>
+
+    <label>
+        Всего мест:
+        <input type="number" th:field="*{totalSeats}"/>
+    </label>
+    <div class="error" th:if="${#fields.hasErrors('totalSeats')}" th:errors="*{totalSeats}"></div>
+
+    <label>
+        Мест эконом-класса:
+        <input type="number" th:field="*{economySeats}"/>
+    </label>
+    <div class="error" th:if="${#fields.hasErrors('economySeats')}" th:errors="*{economySeats}"></div>
+
+    <label>
+        Мест бизнес-класса:
+        <input type="number" th:field="*{businessSeats}"/>
+    </label>
+    <div class="error" th:if="${#fields.hasErrors('businessSeats')}" th:errors="*{businessSeats}"></div>
+
+    <div class="error"
+         th:if="${#fields.hasGlobalErrors()}"
+         th:each="err : ${#fields.globalErrors()}"
+         th:text="${err}"></div>
+
+    <div class="buttons">
+        <button type="submit" class="button">Сохранить</button>
+        <a th:href="@{/admin/aircrafts}" class="button">Отмена</a>
+    </div>
+</form>
+
+</body>
+</html>

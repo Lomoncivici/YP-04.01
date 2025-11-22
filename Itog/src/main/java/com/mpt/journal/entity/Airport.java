@@ -1,0 +1,83 @@
+package com.mpt.journal.entity;
+
+import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
+
+@Entity
+@Table(name = "airports")
+public class Airport {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @NotBlank
+    @Size(min = 3, max = 3, message = "Код должен состоять из 3 символов (IATA)")
+    @Column(nullable = false, unique = true, length = 3)
+    private String code; // SVO, DME и т.п.
+
+    @NotBlank
+    @Size(min = 2, max = 100, message = "Название должно быть от 2 до 100 символов")
+    @Column(nullable = false)
+    private String name;
+
+    @NotBlank
+    @Size(min = 2, max = 100, message = "Город должен быть от 2 до 100 символов")
+    @Column(nullable = false)
+    private String city;
+
+    @NotBlank
+    @Size(min = 2, max = 100, message = "Страна должна быть от 2 до 100 символов")
+    @Column(nullable = false)
+    private String country;
+
+    public Airport() {
+    }
+
+    public Airport(String code, String name, String city, String country) {
+        this.code = code;
+        this.name = name;
+        this.city = city;
+        this.country = country;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getCode() {
+        return code != null ? code.toUpperCase() : null;
+    }
+
+    public void setCode(String code) {
+        this.code = (code != null ? code.toUpperCase() : null);
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
+    }
+
+    public String getCountry() {
+        return country;
+    }
+
+    public void setCountry(String country) {
+        this.country = country;
+    }
+}

@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${title}">Маршрут</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        label { display: block; margin-top: 10px; }
+        select, input[type="number"] { width: 320px; padding: 4px; }
+        .error { color: red; font-size: 0.9em; }
+        .buttons { margin-top: 15px; display: flex; gap: 10px; flex-wrap: wrap; }
+        a.button, button.button {
+            display: inline-block;
+            padding: 6px 12px;
+            text-decoration: none;
+            border: 1px solid #333;
+            border-radius: 4px;
+            background: #f5f5f5;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+<h1 th:text="${title}">Маршрут</h1>
+
+<p>
+    <a th:href="@{/admin/airports}" class="button">Аэропорты (главная)</a>
+    <a th:href="@{/admin/routes}" class="button">Список маршрутов</a>
+    <a th:href="@{/logout}" class="button">Выйти</a>
+</p>
+
+<form th:action="@{/admin/routes/save}" th:object="${route}" method="post">
+    <input type="hidden" th:field="*{id}"/>
+
+    <label>
+        Аэропорт вылета:
+        <select th:field="*{departureAirport}">
+            <option th:each="a : ${airports}"
+                    th:value="${a.id}"
+                    th:text="${a.code + ' ' + a.city}">
+            </option>
+        </select>
+    </label>
+    <div class="error" th:if="${#fields.hasErrors('departureAirport')}" th:errors="*{departureAirport}"></div>
+
+    <label>
+        Аэропорт прилёта:
+        <select th:field="*{arrivalAirport}">
+            <option th:each="a : ${airports}"
+                    th:value="${a.id}"
+                    th:text="${a.code + ' ' + a.city}">
+            </option>
+        </select>
+    </label>
+    <div class="error" th:if="${#fields.hasErrors('arrivalAirport')}" th:errors="*{arrivalAirport}"></div>
+
+    <label>
+        Дистанция (км):
+        <input type="number" th:field="*{distanceKm}"/>
+    </label>
+    <div class="error" th:if="${#fields.hasErrors('distanceKm')}" th:errors="*{distanceKm}"></div>
+
+    <div class="error"
+         th:if="${#fields.hasGlobalErrors()}"
+         th:each="err : ${#fields.globalErrors()}"
+         th:text="${err}"></div>
+
+    <div class="buttons">
+        <button type="submit" class="button">Сохранить</button>
+        <a th:href="@{/admin/routes}" class="button">Отмена</a>
+    </div>
+</form>
+
+</body>
+</html>

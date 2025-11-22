@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title th:text="${title}">Аэропорт</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px;}
+        label { display: block; margin-top: 10px; }
+        input[type="text"] { width: 300px; padding: 4px; }
+        .error { color: red; font-size: 0.9em; }
+        .buttons { margin-top: 15px; display: flex; gap: 10px; flex-wrap: wrap; }
+        a.button, button.button {
+            display: inline-block;
+            padding: 6px 12px;
+            text-decoration: none;
+            border: 1px solid #333;
+            border-radius: 4px;
+            background: #f5f5f5;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+<h1 th:text="${title}">Аэропорт</h1>
+
+<form th:action="@{/admin/airports/save}" th:object="${airport}" method="post">
+    <input type="hidden" th:field="*{id}"/>
+
+    <label>
+        Код (IATA, 3 буквы):
+        <input type="text" th:field="*{code}" maxlength="3"/>
+        <span class="error" th:if="${#fields.hasErrors('code')}" th:errors="*{code}"></span>
+    </label>
+
+    <label>
+        Название:
+        <input type="text" th:field="*{name}"/>
+        <span class="error" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></span>
+    </label>
+
+    <label>
+        Город:
+        <input type="text" th:field="*{city}"/>
+        <span class="error" th:if="${#fields.hasErrors('city')}" th:errors="*{city}"></span>
+    </label>
+
+    <label>
+        Страна:
+        <input type="text" th:field="*{country}"/>
+        <span class="error" th:if="${#fields.hasErrors('country')}" th:errors="*{country}"></span>
+    </label>
+
+    <div class="buttons">
+        <button type="submit" class="button">Сохранить</button>
+        <a th:href="@{/admin/airports}" class="button">Отмена</a>
+        <a th:href="@{/logout}" class="button">Выйти</a>
+    </div>
+</form>
+
+</body>
+</html>

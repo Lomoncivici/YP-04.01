@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Панель администратора – аэропорты</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px;}
+        table { border-collapse: collapse; width: 100%; margin-top: 10px;}
+        th, td { border: 1px solid #ddd; padding: 8px; }
+        th { background: #f0f0f0; }
+        a.button, button.button {
+            display: inline-block;
+            padding: 6px 12px;
+            text-decoration: none;
+            border: 1px solid #333;
+            border-radius: 4px;
+            background: #f5f5f5;
+            cursor: pointer;
+        }
+        .top-bar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        form { margin: 0; display: inline-block; }
+    </style>
+</head>
+<body>
+
+<h1>Панель администратора — аэропорты</h1>
+
+<div class="top-bar">
+    <div>
+        <a th:href="@{/admin/airports/new}" class="button">Добавить аэропорт</a>
+        <a th:href="@{/admin/routes}" class="button">Маршруты</a>
+        <a th:href="@{/admin/aircrafts}" class="button">Самолёты</a>
+        <a th:href="@{/admin/flights}" class="button">Рейсы</a>
+    </div>
+
+    <form method="get" class="search-form">
+        <input type="text" name="search"
+               placeholder="Поиск по модели"
+               th:value="${search}">
+        <button type="submit" class="button">Найти</button>
+        <a th:href="@{/admin/aircrafts}" class="button">Сброс</a>
+    </form>
+
+    <form th:action="@{/logout}" method="post" style="margin-left:auto;">
+        <button type="submit" class="button">Выйти</button>
+    </form>
+</div>
+
+<table>
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Код</th>
+        <th>Название</th>
+        <th>Город</th>
+        <th>Страна</th>
+        <th>Действия</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="airport : ${airportPage.content}">
+        <td th:text="${airport.id}">1</td>
+        <td th:text="${airport.code}">SVO</td>
+        <td th:text="${airport.name}">Шереметьево</td>
+        <td th:text="${airport.city}">Москва</td>
+        <td th:text="${airport.country}">Россия</td>
+        <td>
+            <a th:href="@{'/admin/airports/edit/' + ${airport.id}}" class="button">Редактировать</a>
+            <form th:action="@{'/admin/airports/delete/' + ${airport.id}}"
+                  method="post"
+                  onsubmit="return confirm('Удалить аэропорт?');">
+                <button type="submit" class="button">Удалить</button>
+            </form>
+        </td>
+    </tr>
+    <tr th:if="${#lists.isEmpty(airportPage.content)}">
+        <td colspan="6">Аэропорты не найдены.</td>
+    </tr>
+    </tbody>
+</table>
+
+<div class="pagination" th:if="${airportPage.totalPages > 1}">
+    <a th:if="${!airportPage.first}"
+       th:href="@{/admin/airports(page=${airportPage.number - 1}, search=${search})}">
+        ‹ Назад
+    </a>
+
+    <span th:each="i : ${#numbers.sequence(0, airportPage.totalPages - 1)}">
+        <a th:href="@{/admin/airports(page=${i}, search=${search})}"
+           th:text="${i + 1}"
+           th:classappend="${i} == ${airportPage.number} ? 'active'">
+        </a>
+    </span>
+
+    <a th:if="${!airportPage.last}"
+       th:href="@{/admin/airports(page=${airportPage.number + 1}, search=${search})}">
+        Вперёд ›
+    </a>
+</div>
+
+
+</body>
+</html>

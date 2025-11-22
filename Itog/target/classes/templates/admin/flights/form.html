@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${title}">Рейс</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        label { display: block; margin-top: 10px; }
+        input[type="text"],
+        input[type="number"],
+        input[type="datetime-local"],
+        select { width: 320px; padding: 4px; }
+        .error { color: red; font-size: 0.9em; }
+        .buttons { margin-top: 15px; display: flex; gap: 10px; flex-wrap: wrap; }
+        a.button, button.button {
+            display: inline-block;
+            padding: 6px 12px;
+            text-decoration: none;
+            border: 1px solid #333;
+            border-radius: 4px;
+            background: #f5f5f5;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+<h1 th:text="${title}">Рейс</h1>
+
+<p>
+    <a th:href="@{/admin/airports}" class="button">Аэропорты (главная)</a>
+    <a th:href="@{/admin/flights}" class="button">Список рейсов</a>
+    <a th:href="@{/logout}" class="button">Выйти</a>
+</p>
+
+<form th:action="@{/admin/flights/save}" th:object="${flight}" method="post">
+    <input type="hidden" th:field="*{id}"/>
+
+    <label>
+        Номер рейса:
+        <input type="text" th:field="*{flightNumber}"/>
+    </label>
+    <div class="error" th:if="${#fields.hasErrors('flightNumber')}" th:errors="*{flightNumber}"></div>
+
+    <label>
+        Маршрут:
+        <select th:field="*{route}">
+            <option th:each="r : ${routes}"
+                    th:value="${r.id}"
+                    th:text="${r.departureAirport.code + ' - ' + r.arrivalAirport.code}">
+            </option>
+        </select>
+    </label>
+    <div class="error" th:if="${#fields.hasErrors('route')}" th:errors="*{route}"></div>
+
+    <label>
+        Самолёт:
+        <select th:field="*{aircraft}">
+            <option th:each="a : ${aircrafts}"
+                    th:value="${a.id}"
+                    th:text="${a.model}">
+            </option>
+        </select>
+    </label>
+    <div class="error" th:if="${#fields.hasErrors('aircraft')}" th:errors="*{aircraft}"></div>
+
+    <label>
+        Время вылета:
+        <input type="datetime-local" th:field="*{departureTime}"/>
+    </label>
+    <div class="error" th:if="${#fields.hasErrors('departureTime')}" th:errors="*{departureTime}"></div>
+
+    <label>
+        Время прилёта:
+        <input type="datetime-local" th:field="*{arrivalTime}"/>
+    </label>
+    <div class="error" th:if="${#fields.hasErrors('arrivalTime')}" th:errors="*{arrivalTime}"></div>
+
+    <label>
+        Базовая цена:
+        <input type="number" step="0.01" th:field="*{basePrice}"/>
+    </label>
+    <div class="error" th:if="${#fields.hasErrors('basePrice')}" th:errors="*{basePrice}"></div>
+
+    <label>
+        Статус:
+        <input type="text" th:field="*{status}"/>
+    </label>
+    <div class="error" th:if="${#fields.hasErrors('status')}" th:errors="*{status}"></div>
+
+    <div class="error"
+         th:if="${#fields.hasGlobalErrors()}"
+         th:each="err : ${#fields.globalErrors()}"
+         th:text="${err}"></div>
+
+    <div class="buttons">
+        <button type="submit" class="button">Сохранить</button>
+        <a th:href="@{/admin/flights}" class="button">Отмена</a>
+    </div>
+</form>
+
+</body>
+</html>

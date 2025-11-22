@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Личный кабинет</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        a.button {
+            display: inline-block;
+            padding: 8px 14px;
+            margin-right: 10px;
+            text-decoration: none;
+            border: 1px solid #333;
+            border-radius: 4px;
+            background: #f5f5f5;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Личный кабинет пассажира</h1>
+
+<p>
+    <a th:href="@{/user/flights}" class="button">Доступные рейсы</a>
+    <a th:href="@{/user/bookings}" class="button">Мои бронирования</a>
+    <a th:href="@{/logout}" class="button">Выйти</a>
+</p>
+
+</body>
+</html>

@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Информация о рейсе</title>
+    <style>
+        :root {
+            --accent: #2563eb;
+            --accent-soft: #eff6ff;
+            --border: #e5e7eb;
+            --text-main: #111827;
+            --text-muted: #6b7280;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            background: #f3f4f6;
+            color: var(--text-main);
+        }
+
+        header {
+            background: #ffffff;
+            border-bottom: 1px solid var(--border);
+            padding: 10px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+            font-size: 1rem;
+        }
+
+        .brand span.icon {
+            font-size: 1.2rem;
+        }
+
+        nav {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        a.nav-link {
+            padding: 6px 12px;
+            border-radius: 999px;
+            border: 1px solid transparent;
+            text-decoration: none;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        a.nav-link.active {
+            border-color: var(--accent);
+            color: var(--accent);
+            background: var(--accent-soft);
+        }
+
+        a.nav-link.logout {
+            border-color: #ef4444;
+            color: #b91c1c;
+            background: #fef2f2;
+        }
+
+        a.nav-link:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+            background: var(--accent-soft);
+        }
+
+        a.nav-link.logout:hover {
+            border-color: #b91c1c;
+            background: #fee2e2;
+        }
+
+        main {
+            max-width: 720px;
+            margin: 20px auto 32px;
+            padding: 0 16px;
+        }
+
+        h1 {
+            margin: 0 0 4px;
+            font-size: 1.4rem;
+            font-weight: 600;
+        }
+
+        .subtitle {
+            margin-bottom: 18px;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .card {
+            background: #ffffff;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            padding: 16px 18px;
+        }
+
+        dl {
+            margin: 0;
+        }
+
+        dt {
+            margin-top: 10px;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: .06em;
+            color: var(--text-muted);
+        }
+
+        dd {
+            margin: 2px 0 0;
+            font-size: 0.95rem;
+        }
+
+        .btn-row {
+            display: flex;
+            gap: 10px;
+            margin-top: 18px;
+            flex-wrap: wrap;
+        }
+
+        button.book-btn {
+            padding: 8px 16px;
+            border-radius: 999px;
+            border: 1px solid var(--accent);
+            background: var(--accent);
+            color: white;
+            font-size: 0.9rem;
+            cursor: pointer;
+        }
+
+        button.book-btn:hover {
+            background: #1d4ed8;
+        }
+
+        a.btn-outline {
+            padding: 8px 14px;
+            border-radius: 999px;
+            border: 1px solid var(--border);
+            background: #ffffff;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+
+        a.btn-outline:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+            background: var(--accent-soft);
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="brand">
+        <span class="icon">✈</span>
+        <span>AirBooking</span>
+    </div>
+    <nav>
+        <a th:href="@{/user/profile}" class="nav-link">Профиль</a>
+        <a th:href="@{/user/flights}" class="nav-link active">Рейсы</a>
+        <a th:href="@{/user/bookings}" class="nav-link">Мои брони</a>
+        <a th:href="@{/logout}" class="nav-link logout">Выйти</a>
+    </nav>
+</header>
+
+<main>
+    <h1>
+        Рейс <span th:text="${flight.flightNumber}">SU123</span>
+    </h1>
+    <div class="subtitle">
+        Подробная информация о перелёте и возможность его забронировать.
+    </div>
+
+    <section class="card">
+        <dl>
+            <dt>Маршрут</dt>
+            <dd th:text="${flight.route.departureAirport.code + ' ' + flight.route.departureAirport.city +
+                          ' → ' +
+                          flight.route.arrivalAirport.code + ' ' + flight.route.arrivalAirport.city}">
+                SVO Москва → LED Санкт-Петербург
+            </dd>
+
+            <dt>Самолёт</dt>
+            <dd th:text="${flight.aircraft.model}">Airbus A320</dd>
+
+            <dt>Время вылета</dt>
+            <dd th:text="${flight.departureTime}">2025-01-01T12:00</dd>
+
+            <dt>Время прилёта</dt>
+            <dd th:text="${flight.arrivalTime}">2025-01-01T14:00</dd>
+
+            <dt>Цена</dt>
+            <dd><span th:text="${flight.basePrice}">5000</span> ₽</dd>
+
+            <dt>Статус рейса</dt>
+            <dd th:text="${flight.status}">SCHEDULED</dd>
+        </dl>
+
+        <div class="btn-row">
+            <form th:action="@{'/user/flights/' + ${flight.id} + '/book'}"
+                  method="post"
+                  onsubmit="return confirm('Забронировать билет на этот рейс?');">
+                <button type="submit" class="book-btn">Забронировать</button>
+            </form>
+
+            <a th:href="@{/user/flights}" class="btn-outline">Назад к списку рейсов</a>
+        </div>
+    </section>
+</main>
+
+</body>
+</html>

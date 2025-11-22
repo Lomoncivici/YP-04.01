@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Доступные рейсы</title>
+    <style>
+        :root {
+            --accent: #2563eb;
+            --accent-soft: #eff6ff;
+            --border: #e5e7eb;
+            --text-main: #111827;
+            --text-muted: #6b7280;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            background: #f3f4f6;
+            color: var(--text-main);
+        }
+
+        header {
+            background: #ffffff;
+            border-bottom: 1px solid var(--border);
+            padding: 10px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+            font-size: 1rem;
+        }
+
+        .brand span.icon {
+            font-size: 1.2rem;
+        }
+
+        nav {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        a.nav-link {
+            padding: 6px 12px;
+            border-radius: 999px;
+            border: 1px solid transparent;
+            text-decoration: none;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        a.nav-link.active {
+            border-color: var(--accent);
+            color: var(--accent);
+            background: var(--accent-soft);
+        }
+
+        a.nav-link.logout {
+            border-color: #ef4444;
+            color: #b91c1c;
+            background: #fef2f2;
+        }
+
+        a.nav-link:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+            background: var(--accent-soft);
+        }
+
+        a.nav-link.logout:hover {
+            border-color: #b91c1c;
+            background: #fee2e2;
+        }
+
+        main {
+            max-width: 960px;
+            margin: 20px auto 32px;
+            padding: 0 16px;
+        }
+
+        h1 {
+            margin: 0 0 4px;
+            font-size: 1.4rem;
+            font-weight: 600;
+        }
+
+        .subtitle {
+            margin-bottom: 16px;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .card {
+            background: #ffffff;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            padding: 12px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+
+        th, td {
+            padding: 8px 8px;
+            text-align: left;
+            border-bottom: 1px solid #f3f4f6;
+            white-space: nowrap;
+        }
+
+        th {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: .06em;
+            color: var(--text-muted);
+        }
+
+        tbody tr:hover {
+            background: #f9fafb;
+        }
+
+        td.route {
+            white-space: normal;
+        }
+
+        .chip {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 999px;
+            border: 1px solid var(--border);
+            font-size: 0.75rem;
+            background: #f9fafb;
+        }
+
+        .price {
+            font-weight: 600;
+        }
+
+        a.btn-small {
+            padding: 4px 10px;
+            border-radius: 999px;
+            border: 1px solid var(--accent);
+            background: #ffffff;
+            color: var(--accent);
+            text-decoration: none;
+            font-size: 0.8rem;
+        }
+
+        a.btn-small:hover {
+            background: var(--accent-soft);
+        }
+
+        .empty {
+            text-align: center;
+            padding: 12px 0;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 768px) {
+            th:nth-child(3), td:nth-child(3),
+            th:nth-child(4), td:nth-child(4) {
+                display: none; /* прячем самолёт и прилёт на маленьких экранах */
+            }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="brand">
+        <span class="icon">✈</span>
+        <span>AirBooking</span>
+    </div>
+    <nav>
+        <a th:href="@{/user/profile}" class="nav-link">Профиль</a>
+        <a th:href="@{/user/flights}" class="nav-link active">Рейсы</a>
+        <a th:href="@{/user/bookings}" class="nav-link">Мои брони</a>
+        <a th:href="@{/logout}" class="nav-link logout">Выйти</a>
+    </nav>
+</header>
+
+<main>
+    <h1>Доступные рейсы</h1>
+    <div class="subtitle">
+        Выберите подходящий рейс, чтобы перейти к бронированию.
+    </div>
+
+    <section class="card">
+        <table>
+            <thead>
+            <tr>
+                <th>Рейс</th>
+                <th>Маршрут</th>
+                <th>Самолёт</th>
+                <th>Вылет</th>
+                <th>Цена</th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="f : ${flights}">
+                <td><span class="chip" th:text="${f.flightNumber}">SU123</span></td>
+                <td class="route"
+                    th:text="${f.route.departureAirport.code + ' ' + f.route.departureAirport.city +
+                              ' → ' +
+                              f.route.arrivalAirport.code + ' ' + f.route.arrivalAirport.city}">
+                    SVO Москва → LED Санкт-Петербург
+                </td>
+                <td th:text="${f.aircraft.model}">Airbus A320</td>
+                <td th:text="${f.departureTime}">2025-01-01T12:00</td>
+                <td><span class="price" th:text="${f.basePrice}">5000</span> ₽</td>
+                <td>
+                    <a th:href="@{'/user/flights/' + ${f.id}}" class="btn-small">Подробнее</a>
+                </td>
+            </tr>
+            <tr th:if="${#lists.isEmpty(flights)}">
+                <td colspan="6" class="empty">Рейсов пока нет</td>
+            </tr>
+            </tbody>
+        </table>
+    </section>
+</main>
+
+</body>
+</html>

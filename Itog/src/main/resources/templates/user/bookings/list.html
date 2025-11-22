@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Мои бронирования</title>
+    <style>
+        :root {
+            --accent: #2563eb;
+            --accent-soft: #eff6ff;
+            --border: #e5e7eb;
+            --text-main: #111827;
+            --text-muted: #6b7280;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            background: #f3f4f6;
+            color: var(--text-main);
+        }
+
+        header {
+            background: #ffffff;
+            border-bottom: 1px solid var(--border);
+            padding: 10px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+            font-size: 1rem;
+        }
+
+        .brand span.icon {
+            font-size: 1.2rem;
+        }
+
+        nav {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        a.nav-link {
+            padding: 6px 12px;
+            border-radius: 999px;
+            border: 1px solid transparent;
+            text-decoration: none;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        a.nav-link.active {
+            border-color: var(--accent);
+            color: var(--accent);
+            background: var(--accent-soft);
+        }
+
+        a.nav-link.logout {
+            border-color: #ef4444;
+            color: #b91c1c;
+            background: #fef2f2;
+        }
+
+        a.nav-link:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+            background: var(--accent-soft);
+        }
+
+        a.nav-link.logout:hover {
+            border-color: #b91c1c;
+            background: #fee2e2;
+        }
+
+        main {
+            max-width: 960px;
+            margin: 20px auto 32px;
+            padding: 0 16px;
+        }
+
+        h1 {
+            margin: 0 0 4px;
+            font-size: 1.4rem;
+            font-weight: 600;
+        }
+
+        .subtitle {
+            margin-bottom: 16px;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .card {
+            background: #ffffff;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            padding: 12px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+
+        th, td {
+            padding: 8px 8px;
+            text-align: left;
+            border-bottom: 1px solid #f3f4f6;
+            white-space: nowrap;
+        }
+
+        th {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: .06em;
+            color: var(--text-muted);
+        }
+
+        tbody tr:hover {
+            background: #f9fafb;
+        }
+
+        td.route {
+            white-space: normal;
+        }
+
+        .pill {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 999px;
+            font-size: 0.75rem;
+            border: 1px solid var(--border);
+            background: #f9fafb;
+        }
+
+        .empty {
+            text-align: center;
+            padding: 12px 0;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 768px) {
+            th:nth-child(2), td:nth-child(2) {
+                display: none; /* createdAt */
+            }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="brand">
+        <span class="icon">✈</span>
+        <span>AirBooking</span>
+    </div>
+    <nav>
+        <a th:href="@{/user/profile}" class="nav-link">Профиль</a>
+        <a th:href="@{/user/flights}" class="nav-link">Рейсы</a>
+        <a th:href="@{/user/bookings}" class="nav-link active">Мои брони</a>
+        <a th:href="@{/logout}" class="nav-link logout">Выйти</a>
+    </nav>
+</header>
+
+<main>
+    <h1>Мои бронирования</h1>
+    <div class="subtitle">
+        Список всех оформленных бронирований и их статус.
+    </div>
+
+    <section class="card">
+        <table>
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Создано</th>
+                <th>Рейс</th>
+                <th>Маршрут</th>
+                <th>Статус</th>
+                <th>Сумма</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="b : ${bookings}">
+                <td th:text="${b.id}">1</td>
+                <td th:text="${b.createdAt}">2025-01-01T10:00</td>
+                <td th:text="${b.flight.flightNumber}">SU123</td>
+                <td class="route"
+                    th:text="${b.flight.route.departureAirport.code + ' ' + b.flight.route.departureAirport.city +
+                              ' → ' +
+                              b.flight.route.arrivalAirport.code + ' ' + b.flight.route.arrivalAirport.city}">
+                    SVO Москва → LED Санкт-Петербург
+                </td>
+                <td>
+                    <span class="pill" th:text="${b.status}">BOOKED</span>
+                </td>
+                <td><span th:text="${b.totalPrice}">5000</span> ₽</td>
+            </tr>
+            <tr th:if="${#lists.isEmpty(bookings)}">
+                <td colspan="6" class="empty">У вас пока нет бронирований</td>
+            </tr>
+            </tbody>
+        </table>
+    </section>
+</main>
+
+</body>
+</html>
